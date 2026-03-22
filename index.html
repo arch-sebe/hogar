@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -18,226 +19,838 @@
     --border: #e0d5c7;
     --done-bg: #eef4f0;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; }
-  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #aaa; display: inline-block; margin-right: 5px; transition: background 0.3s; }
-  .sync-dot.online { background: #4caf50; }
-  .sync-dot.syncing { background: var(--terracotta); animation: pulse 0.8s infinite; }
-  .sync-dot.offline { background: #f44336; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .sync-label { font-size: 0.7rem; color: #aaa; letter-spacing: 0.03em; }
-  header { background: var(--charcoal); padding: 16px 24px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
-  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .logo { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--cream); display: flex; align-items: center; gap: 8px; }
-  .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
-  .date-badge { background: var(--terracotta); color: white; font-size: 0.7rem; font-weight: 500; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.04em; }
-  .sync-row { display: flex; align-items: center; }
-  .tabs { display: flex; gap: 4px; }
-  .tab { flex: 1; padding: 10px 8px; border: none; background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
-  .tab.active { color: var(--cream); border-bottom-color: var(--terracotta); }
-  .content { padding: 24px 20px; max-width: 600px; margin: 0 auto; }
-  .section { display: none; }
-  .section.active { display: block; }
-  .section-header { margin-bottom: 20px; }
-  .section-title { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
-  .section-sub { color: var(--muted); font-size: 0.85rem; }
-  .main-input { flex: 1; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; background: white; color: var(--charcoal); outline: none; transition: border-color 0.2s; }
-  .main-input:focus { border-color: var(--terracotta); }
-  .main-input::placeholder { color: #bfb9b0; }
-  .add-btn { padding: 12px 18px; background: var(--terracotta); color: white; border: none; border-radius: 12px; font-size: 1.2rem; cursor: pointer; transition: background 0.2s, transform 0.1s; display: flex; align-items: center; justify-content: center; }
-  .add-btn:active { transform: scale(0.95); }
-  .filter-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .filter-chip { padding: 5px 12px; border-radius: 20px; border: 1.5px solid var(--border); background: white; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; color: var(--muted); }
-  .filter-chip.active { background: var(--charcoal); border-color: var(--charcoal); color: white; }
-  .items-list { display: flex; flex-direction: column; gap: 8px; }
-  .item-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; transition: all 0.2s; animation: slideIn 0.25s ease; }
-  @keyframes slideIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
-  .item-card.done { background: var(--done-bg); border-color: #d0e3d8; opacity: 0.75; }
-  .item-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: white; }
-  .item-card.done .item-check { background: var(--sage); border-color: var(--sage); color: white; font-size: 12px; }
-  .item-text { flex: 1; font-size: 0.95rem; color: var(--charcoal); transition: all 0.2s; }
-  .item-card.done .item-text { text-decoration: line-through; color: var(--muted); }
-  .item-qty { background: var(--warm); color: var(--terracotta); font-size: 0.78rem; font-weight: 600; padding: 2px 8px; border-radius: 8px; }
-  .item-who { font-size: 0.78rem; color: var(--muted); background: var(--warm); padding: 2px 8px; border-radius: 8px; }
-  .item-who.yo { background: #fde8df; color: var(--terracotta); }
-  .item-who.ella { background: #dff0e6; color: var(--sage-dark); }
-  .del-btn { background: none; border: none; cursor: pointer; color: #d0cbc4; font-size: 1rem; padding: 2px; transition: color 0.2s; line-height: 1; }
-  .del-btn:hover { color: #c0392b; }
-  .qty-input { width: 70px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; background: white; color: var(--charcoal); outline: none; }
-  .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
-  .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
-  .empty p { font-size: 0.9rem; }
-  .notes-area { width: 100%; min-height: 180px; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; background: white; color: var(--charcoal); outline: none; resize: vertical; line-height: 1.6; transition: border-color 0.2s; margin-bottom: 12px; }
-  .notes-area:focus { border-color: var(--terracotta); }
-  .save-note-btn { width: 100%; padding: 13px; background: var(--sage); color: white; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
-  .saved-notes { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-  .note-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; animation: slideIn 0.25s ease; }
-  .note-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .note-from { font-size: 0.78rem; font-weight: 600; color: var(--terracotta); letter-spacing: 0.04em; }
-  .note-time { font-size: 0.75rem; color: var(--muted); }
-  .note-body { font-size: 0.9rem; line-height: 1.55; color: var(--charcoal); white-space: pre-wrap; }
-  .bottom-action { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
-  .count-badge { font-size: 0.82rem; color: var(--muted); }
-  .clear-done-btn { font-size: 0.82rem; color: var(--terracotta); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 4px 0; text-decoration: underline; text-underline-offset: 2px; }
-  .who-picker { display: flex; gap: 6px; margin-bottom: 16px; }
-  .who-pill { flex: 1; padding: 9px; border-radius: 10px; border: 1.5px solid var(--border); background: white; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; text-align: center; transition: all 0.2s; color: var(--muted); }
-  .who-pill.active-yo { background: #fde8df; border-color: var(--terracotta); color: var(--terracotta); font-weight: 500; }
-  .who-pill.active-ella { background: #dff0e6; border-color: var(--sage); color: var(--sage-dark); font-weight: 500; }
-  .who-pill.active-ambos { background: var(--warm); border-color: #c8b89a; color: var(--charcoal); font-weight: 500; }
-  .note-from-picker { display: flex; gap: 8px; margin-bottom: 12px; }
-  .from-btn { flex: 1; padding: 9px; border-radius: 10px; border: 1.5px solid var(--border); background: white; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; color: var(--muted); }
-  .from-btn.active { background: var(--charcoal); border-color: var(--charcoal); color: white; }
-  .progress-wrap { margin-bottom: 20px; }
-  .progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
-  .progress-bar { height: 6px; background: var(--warm); border-radius: 10px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sage), var(--terracotta)); border-radius: 10px; transition: width 0.4s ease; }
-  .loading-overlay { position: fixed; inset: 0; background: var(--cream); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 16px; }
-  .loading-overlay.hidden { display: none; }
-  .loading-logo { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--charcoal); }
-  .loading-sub { color: var(--muted); font-size: 0.9rem; }
-  .spinner { width: 32px; height: 32px; border: 3px solid var(--warm); border-top-color: var(--terracotta); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @media (max-width: 420px) { .logo { font-size: 1.2rem; } .tab { font-size: 0.76rem; padding: 10px 4px; } .section-title { font-size: 1.3rem; } }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: var(–cream);
+color: var(–charcoal);
+min-height: 100vh;
+}
+
+/* HEADER */
+header {
+background: var(–charcoal);
+padding: 20px 24px 0;
+position: sticky;
+top: 0;
+z-index: 100;
+box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.header-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 16px;
+}
+
+.logo {
+font-family: ‘Fraunces’, serif;
+font-size: 1.5rem;
+color: var(–cream);
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.logo span { font-size: 1.6rem; }
+
+.date-badge {
+background: var(–terracotta);
+color: white;
+font-size: 0.72rem;
+font-weight: 500;
+padding: 4px 10px;
+border-radius: 20px;
+letter-spacing: 0.04em;
+}
+
+/* TABS */
+.tabs {
+display: flex;
+gap: 4px;
+}
+
+.tab {
+flex: 1;
+padding: 10px 8px;
+border: none;
+background: transparent;
+color: var(–muted);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.82rem;
+font-weight: 500;
+cursor: pointer;
+border-bottom: 2px solid transparent;
+transition: all 0.2s;
+letter-spacing: 0.02em;
+white-space: nowrap;
+}
+
+.tab.active {
+color: var(–cream);
+border-bottom-color: var(–terracotta);
+}
+
+.tab:hover:not(.active) { color: #b0a89a; }
+
+/* CONTENT */
+.content {
+padding: 24px 20px;
+max-width: 600px;
+margin: 0 auto;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* SECTION HEADER */
+.section-header {
+margin-bottom: 20px;
+}
+
+.section-title {
+font-family: ‘Fraunces’, serif;
+font-size: 1.6rem;
+font-weight: 600;
+color: var(–charcoal);
+margin-bottom: 4px;
+}
+
+.section-sub {
+color: var(–muted);
+font-size: 0.85rem;
+}
+
+/* INPUT ROW */
+.input-row {
+display: flex;
+gap: 8px;
+margin-bottom: 20px;
+}
+
+.main-input {
+flex: 1;
+padding: 12px 16px;
+border: 1.5px solid var(–border);
+border-radius: 12px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.95rem;
+background: white;
+color: var(–charcoal);
+outline: none;
+transition: border-color 0.2s;
+}
+
+.main-input:focus { border-color: var(–terracotta); }
+.main-input::placeholder { color: #bfb9b0; }
+
+.add-btn {
+padding: 12px 18px;
+background: var(–terracotta);
+color: white;
+border: none;
+border-radius: 12px;
+font-size: 1.2rem;
+cursor: pointer;
+transition: background 0.2s, transform 0.1s;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.add-btn:hover { background: var(–terracotta-dark); }
+.add-btn:active { transform: scale(0.95); }
+
+/* FILTERS */
+.filter-row {
+display: flex;
+gap: 8px;
+margin-bottom: 16px;
+flex-wrap: wrap;
+}
+
+.filter-chip {
+padding: 5px 12px;
+border-radius: 20px;
+border: 1.5px solid var(–border);
+background: white;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.8rem;
+cursor: pointer;
+transition: all 0.2s;
+color: var(–muted);
+}
+
+.filter-chip.active {
+background: var(–charcoal);
+border-color: var(–charcoal);
+color: white;
+}
+
+/* ITEMS */
+.items-list { display: flex; flex-direction: column; gap: 8px; }
+
+.item-card {
+background: white;
+border: 1.5px solid var(–border);
+border-radius: 14px;
+padding: 14px 16px;
+display: flex;
+align-items: center;
+gap: 12px;
+transition: all 0.2s;
+animation: slideIn 0.25s ease;
+}
+
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(-8px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.item-card.done {
+background: var(–done-bg);
+border-color: #d0e3d8;
+opacity: 0.75;
+}
+
+.item-check {
+width: 22px;
+height: 22px;
+border-radius: 50%;
+border: 2px solid var(–border);
+cursor: pointer;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.2s;
+background: white;
+}
+
+.item-check:hover { border-color: var(–sage); }
+.item-card.done .item-check { background: var(–sage); border-color: var(–sage); color: white; font-size: 12px; }
+
+.item-text {
+flex: 1;
+font-size: 0.95rem;
+color: var(–charcoal);
+transition: all 0.2s;
+}
+
+.item-card.done .item-text {
+text-decoration: line-through;
+color: var(–muted);
+}
+
+.item-qty {
+background: var(–warm);
+color: var(–terracotta);
+font-size: 0.78rem;
+font-weight: 600;
+padding: 2px 8px;
+border-radius: 8px;
+}
+
+.item-who {
+font-size: 0.78rem;
+color: var(–muted);
+background: var(–warm);
+padding: 2px 8px;
+border-radius: 8px;
+}
+
+.item-who.yo { background: #fde8df; color: var(–terracotta); }
+.item-who.ella { background: #dff0e6; color: var(–sage-dark); }
+
+.del-btn {
+background: none;
+border: none;
+cursor: pointer;
+color: #d0cbc4;
+font-size: 1rem;
+padding: 2px;
+transition: color 0.2s;
+line-height: 1;
+}
+
+.del-btn:hover { color: #c0392b; }
+
+/* TASKS EXTRA CONTROLS */
+.task-controls {
+display: flex;
+gap: 8px;
+margin-bottom: 16px;
+}
+
+.who-select, .qty-input {
+padding: 10px 12px;
+border: 1.5px solid var(–border);
+border-radius: 10px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.85rem;
+background: white;
+color: var(–charcoal);
+outline: none;
+}
+
+.who-select { flex: 1; }
+.qty-input { width: 70px; }
+
+/* EMPTY STATE */
+.empty {
+text-align: center;
+padding: 40px 20px;
+color: var(–muted);
+}
+
+.empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+.empty p { font-size: 0.9rem; }
+
+/* NOTES */
+.notes-area {
+width: 100%;
+min-height: 180px;
+padding: 16px;
+border: 1.5px solid var(–border);
+border-radius: 14px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.95rem;
+background: white;
+color: var(–charcoal);
+outline: none;
+resize: vertical;
+line-height: 1.6;
+transition: border-color 0.2s;
+margin-bottom: 12px;
+}
+
+.notes-area:focus { border-color: var(–terracotta); }
+
+.save-note-btn {
+width: 100%;
+padding: 13px;
+background: var(–sage);
+color: white;
+border: none;
+border-radius: 12px;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.95rem;
+font-weight: 500;
+cursor: pointer;
+transition: background 0.2s;
+}
+
+.save-note-btn:hover { background: var(–sage-dark); }
+
+.saved-notes { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+
+.note-card {
+background: white;
+border: 1.5px solid var(–border);
+border-radius: 14px;
+padding: 14px 16px;
+animation: slideIn 0.25s ease;
+}
+
+.note-meta {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 8px;
+}
+
+.note-from {
+font-size: 0.78rem;
+font-weight: 600;
+color: var(–terracotta);
+letter-spacing: 0.04em;
+}
+
+.note-time {
+font-size: 0.75rem;
+color: var(–muted);
+}
+
+.note-body {
+font-size: 0.9rem;
+line-height: 1.55;
+color: var(–charcoal);
+white-space: pre-wrap;
+}
+
+/* BOTTOM ACTION */
+.bottom-action {
+margin-top: 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.count-badge {
+font-size: 0.82rem;
+color: var(–muted);
+}
+
+.clear-done-btn {
+font-size: 0.82rem;
+color: var(–terracotta);
+background: none;
+border: none;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+padding: 4px 0;
+text-decoration: underline;
+text-underline-offset: 2px;
+}
+
+/* WHO SELECTOR */
+.who-picker {
+display: flex;
+gap: 6px;
+margin-bottom: 16px;
+}
+
+.who-pill {
+flex: 1;
+padding: 9px;
+border-radius: 10px;
+border: 1.5px solid var(–border);
+background: white;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.85rem;
+cursor: pointer;
+text-align: center;
+transition: all 0.2s;
+color: var(–muted);
+}
+
+.who-pill.active-yo { background: #fde8df; border-color: var(–terracotta); color: var(–terracotta); font-weight: 500; }
+.who-pill.active-ella { background: #dff0e6; border-color: var(–sage); color: var(–sage-dark); font-weight: 500; }
+.who-pill.active-ambos { background: var(–warm); border-color: #c8b89a; color: var(–charcoal); font-weight: 500; }
+
+/* NOTE AUTHOR */
+.note-from-picker {
+display: flex;
+gap: 8px;
+margin-bottom: 12px;
+}
+
+.from-btn {
+flex: 1;
+padding: 9px;
+border-radius: 10px;
+border: 1.5px solid var(–border);
+background: white;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.85rem;
+cursor: pointer;
+transition: all 0.2s;
+color: var(–muted);
+}
+
+.from-btn.active { background: var(–charcoal); border-color: var(–charcoal); color: white; }
+
+/* PROGRESS BAR */
+.progress-wrap { margin-bottom: 20px; }
+.progress-label {
+display: flex;
+justify-content: space-between;
+font-size: 0.78rem;
+color: var(–muted);
+margin-bottom: 6px;
+}
+.progress-bar {
+height: 6px;
+background: var(–warm);
+border-radius: 10px;
+overflow: hidden;
+}
+.progress-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–sage), var(–terracotta));
+border-radius: 10px;
+transition: width 0.4s ease;
+}
+
+@media (max-width: 420px) {
+.logo { font-size: 1.2rem; }
+.tab { font-size: 0.76rem; padding: 10px 4px; }
+.section-title { font-size: 1.3rem; }
+}
 </style>
+
 </head>
 <body>
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-logo">🏠 Nuestro Hogar</div>
-  <div class="spinner"></div>
-  <div class="loading-sub">Conectando...</div>
-</div>
+
 <header>
   <div class="header-top">
     <div class="logo"><span>🏠</span> Nuestro Hogar</div>
-    <div class="header-right">
-      <div class="date-badge" id="dateBadge"></div>
-      <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span class="sync-label" id="syncLabel">conectando</span></div>
-    </div>
+    <div class="date-badge" id="dateBadge"></div>
   </div>
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('super',this)">🛒 Súper</button>
-    <button class="tab" onclick="switchTab('tareas',this)">✅ Tareas</button>
-    <button class="tab" onclick="switchTab('notas',this)">💬 Notas</button>
+    <button class="tab active" onclick="switchTab('super')">🛒 Súper</button>
+    <button class="tab" onclick="switchTab('tareas')">✅ Tareas</button>
+    <button class="tab" onclick="switchTab('notas')">💬 Notas</button>
   </div>
 </header>
+
 <div class="content">
+
+  <!-- SÚPER -->
+
   <div class="section active" id="section-super">
-    <div class="section-header"><div class="section-title">Lista del súper</div><div class="section-sub">Todo lo que necesitan comprar</div></div>
-    <div class="progress-wrap" id="superProgress" style="display:none"><div class="progress-label"><span>Progreso</span><span id="superProgressText"></span></div><div class="progress-bar"><div class="progress-fill" id="superProgressFill"></div></div></div>
-    <div style="display:flex;gap:8px;margin-bottom:8px;">
-      <input class="main-input" id="superInput" placeholder="Ej: Leche, jabón, arroz..." style="flex:1" onkeydown="if(event.key==='Enter')addSuper()">
-      <input class="qty-input" id="superQty" placeholder="Cant.">
-      <button class="add-btn" onclick="addSuper()">+</button>
+    <div class="section-header">
+      <div class="section-title">Lista del súper</div>
+      <div class="section-sub">Todo lo que necesitan comprar</div>
     </div>
-    <div class="filter-row">
-      <button class="filter-chip active" onclick="setSuperFilter('todos',this)">Todos</button>
-      <button class="filter-chip" onclick="setSuperFilter('pendientes',this)">Pendientes</button>
-      <button class="filter-chip" onclick="setSuperFilter('listos',this)">Listos</button>
-    </div>
-    <div class="items-list" id="superList"></div>
-    <div class="bottom-action"><span class="count-badge" id="superCount"></span><button class="clear-done-btn" onclick="clearDoneSuper()">Limpiar comprados</button></div>
+
+```
+<div class="progress-wrap" id="superProgress" style="display:none">
+  <div class="progress-label">
+    <span>Progreso</span>
+    <span id="superProgressText"></span>
   </div>
-  <div class="section" id="section-tareas">
-    <div class="section-header"><div class="section-title">Tareas del hogar</div><div class="section-sub">¿Quién hace qué?</div></div>
-    <div class="progress-wrap" id="tareasProgress" style="display:none"><div class="progress-label"><span>Completadas</span><span id="tareasProgressText"></span></div><div class="progress-bar"><div class="progress-fill" id="tareasProgressFill"></div></div></div>
-    <div style="display:flex;gap:8px;margin-bottom:8px;">
-      <input class="main-input" id="tareasInput" placeholder="Ej: Lavar los trastes..." style="flex:1" onkeydown="if(event.key==='Enter')addTarea()">
-      <button class="add-btn" onclick="addTarea()">+</button>
-    </div>
-    <div class="who-picker">
-      <button class="who-pill active-yo" id="pill-yo" onclick="setWho('yo')">🙋 Yo</button>
-      <button class="who-pill" id="pill-ella" onclick="setWho('ella')">👩 Ella</button>
-      <button class="who-pill" id="pill-ambos" onclick="setWho('ambos')">🤝 Ambos</button>
-    </div>
-    <div class="filter-row">
-      <button class="filter-chip active" onclick="setTareasFilter('todos',this)">Todos</button>
-      <button class="filter-chip" onclick="setTareasFilter('pendientes',this)">Pendientes</button>
-      <button class="filter-chip" onclick="setTareasFilter('yo',this)">Mis tareas</button>
-      <button class="filter-chip" onclick="setTareasFilter('ella',this)">Sus tareas</button>
-    </div>
-    <div class="items-list" id="tareasList"></div>
-    <div class="bottom-action"><span class="count-badge" id="tareasCount"></span><button class="clear-done-btn" onclick="clearDoneTareas()">Limpiar completadas</button></div>
-  </div>
-  <div class="section" id="section-notas">
-    <div class="section-header"><div class="section-title">Notas entre los dos</div><div class="section-sub">Mensajes rápidos sin WhatsApp</div></div>
-    <div class="note-from-picker">
-      <button class="from-btn active" id="from-yo" onclick="setFrom('yo')">🙋 De mi parte</button>
-      <button class="from-btn" id="from-ella" onclick="setFrom('ella')">👩 De su parte</button>
-    </div>
-    <textarea class="notes-area" id="noteInput" placeholder="Escribe aquí tu nota o recordatorio..."></textarea>
-    <button class="save-note-btn" onclick="saveNote()">Guardar nota 💾</button>
-    <div class="saved-notes" id="savedNotes"></div>
-  </div>
+  <div class="progress-bar"><div class="progress-fill" id="superProgressFill"></div></div>
 </div>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyAalOXA-gYe0kgULIbtHbwHsDuM5Zy7_7A",
-  authDomain: "hogar-7351d.firebaseapp.com",
-  databaseURL: "https://hogar-7351d-default-rtdb.firebaseio.com",
-  projectId: "hogar-7351d",
-  storageBucket: "hogar-7351d.firebasestorage.app",
-  messagingSenderId: "86424674405",
-  appId: "1:86424674405:web:493afe98f1eded34bde68c"
+
+<div style="display:flex;gap:8px;margin-bottom:8px;">
+  <input class="main-input" id="superInput" placeholder="Ej: Leche, jabón, arroz..." style="flex:1" onkeydown="if(event.key==='Enter')addSuper()">
+  <input class="qty-input" id="superQty" placeholder="Cant." type="text">
+  <button class="add-btn" onclick="addSuper()">+</button>
+</div>
+
+<div class="filter-row">
+  <button class="filter-chip active" onclick="setSuperFilter('todos',this)">Todos</button>
+  <button class="filter-chip" onclick="setSuperFilter('pendientes',this)">Pendientes</button>
+  <button class="filter-chip" onclick="setSuperFilter('listos',this)">Listos</button>
+</div>
+
+<div class="items-list" id="superList"></div>
+<div class="bottom-action">
+  <span class="count-badge" id="superCount"></span>
+  <button class="clear-done-btn" onclick="clearDoneSuper()">Limpiar comprados</button>
+</div>
+```
+
+  </div>
+
+  <!-- TAREAS -->
+
+  <div class="section" id="section-tareas">
+    <div class="section-header">
+      <div class="section-title">Tareas del hogar</div>
+      <div class="section-sub">¿Quién hace qué?</div>
+    </div>
+
+```
+<div class="progress-wrap" id="tareasProgress" style="display:none">
+  <div class="progress-label">
+    <span>Completadas</span>
+    <span id="tareasProgressText"></span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="tareasProgressFill"></div></div>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:8px;">
+  <input class="main-input" id="tareasInput" placeholder="Ej: Lavar los trastes..." style="flex:1" onkeydown="if(event.key==='Enter')addTarea()">
+  <button class="add-btn" onclick="addTarea()">+</button>
+</div>
+
+<div class="who-picker">
+  <button class="who-pill active-yo" id="pill-yo" onclick="setWho('yo')">🙋 Yo</button>
+  <button class="who-pill" id="pill-ella" onclick="setWho('ella')">👩 Ella</button>
+  <button class="who-pill" id="pill-ambos" onclick="setWho('ambos')">🤝 Ambos</button>
+</div>
+
+<div class="filter-row">
+  <button class="filter-chip active" onclick="setTareasFilter('todos',this)">Todos</button>
+  <button class="filter-chip" onclick="setTareasFilter('pendientes',this)">Pendientes</button>
+  <button class="filter-chip" onclick="setTareasFilter('yo',this)">Mis tareas</button>
+  <button class="filter-chip" onclick="setTareasFilter('ella',this)">Sus tareas</button>
+</div>
+
+<div class="items-list" id="tareasList"></div>
+<div class="bottom-action">
+  <span class="count-badge" id="tareasCount"></span>
+  <button class="clear-done-btn" onclick="clearDoneTareas()">Limpiar completadas</button>
+</div>
+```
+
+  </div>
+
+  <!-- NOTAS -->
+
+  <div class="section" id="section-notas">
+    <div class="section-header">
+      <div class="section-title">Notas entre los dos</div>
+      <div class="section-sub">Mensajes rápidos sin WhatsApp</div>
+    </div>
+
+```
+<div class="note-from-picker">
+  <button class="from-btn active" id="from-yo" onclick="setFrom('yo')">🙋 De mi parte</button>
+  <button class="from-btn" id="from-ella" onclick="setFrom('ella')">👩 De su parte</button>
+</div>
+
+<textarea class="notes-area" id="noteInput" placeholder="Escribe aquí tu nota o recordatorio..."></textarea>
+<button class="save-note-btn" onclick="saveNote()">Guardar nota 💾</button>
+
+<div class="saved-notes" id="savedNotes"></div>
+```
+
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────
+let state = {
+  super: [],
+  tareas: [],
+  notas: []
 };
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
-let superItems = {}, tareasItems = {}, notasItems = {};
-let superFilter = 'todos', tareasFilter = 'todos', selectedWho = 'yo', selectedFrom = 'yo';
-function setSyncStatus(s) {
-  document.getElementById('syncDot').className = 'sync-dot ' + s;
-  document.getElementById('syncLabel').textContent = {online:'sincronizado',syncing:'guardando...',offline:'sin conexión'}[s]||s;
+
+let superFilter = 'todos';
+let tareasFilter = 'todos';
+let selectedWho = 'yo';
+let selectedFrom = 'yo';
+
+// ── STORAGE ────────────────────────────────────────────────────────────
+function save() { localStorage.setItem('nuestroHogar_v2', JSON.stringify(state)); }
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem('nuestroHogar_v2'));
+    if (d) state = d;
+  } catch(e) {}
 }
-signInAnonymously(auth).catch(console.error);
-onAuthStateChanged(auth, user => {
-  if (!user) return;
-  onValue(ref(db,'super'), s => { superItems=s.val()||{}; renderSuper(); setSyncStatus('online'); });
-  onValue(ref(db,'tareas'), s => { tareasItems=s.val()||{}; renderTareas(); });
-  onValue(ref(db,'notas'), s => { notasItems=s.val()||{}; renderNotas(); });
-  document.getElementById('loadingOverlay').classList.add('hidden');
-});
-onValue(ref(db,'.info/connected'), s => setSyncStatus(s.val()?'online':'offline'));
+
+// ── DATE ───────────────────────────────────────────────────────────────
 function initDate() {
-  const days=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'], months=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'], now=new Date();
-  document.getElementById('dateBadge').textContent=`${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const now = new Date();
+  document.getElementById('dateBadge').textContent =
+    `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
 }
-window.switchTab=function(id,el){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('section-'+id).classList.add('active');el.classList.add('active');};
-window.addSuper=async function(){const inp=document.getElementById('superInput'),qty=document.getElementById('superQty'),text=inp.value.trim();if(!text){inp.focus();return;}setSyncStatus('syncing');await push(ref(db,'super'),{text,qty:qty.value.trim(),done:false,ts:Date.now()});inp.value='';qty.value='';inp.focus();};
-window.setSuperFilter=function(f,el){superFilter=f;document.querySelectorAll('#section-super .filter-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderSuper();};
-window.toggleSuper=async function(id){const item=superItems[id];if(!item)return;setSyncStatus('syncing');await set(ref(db,`super/${id}/done`),!item.done);};
-window.deleteSuper=async function(id){setSyncStatus('syncing');await remove(ref(db,`super/${id}`));};
-window.clearDoneSuper=async function(){setSyncStatus('syncing');await Promise.all(Object.entries(superItems).filter(([,v])=>v.done).map(([k])=>remove(ref(db,`super/${k}`))));};
-function renderSuper(){
-  const list=document.getElementById('superList'),all=Object.entries(superItems).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
-  let items=all;
-  if(superFilter==='pendientes')items=all.filter(([,v])=>!v.done);
-  if(superFilter==='listos')items=all.filter(([,v])=>v.done);
-  const total=all.length,done=all.filter(([,v])=>v.done).length;
-  const pw=document.getElementById('superProgress');
-  if(total>0){pw.style.display='block';document.getElementById('superProgressText').textContent=`${done}/${total}`;document.getElementById('superProgressFill').style.width=`${Math.round(done/total*100)}%`;}else{pw.style.display='none';}
-  document.getElementById('superCount').textContent=total===0?'':`${total-done} pendiente${total-done!==1?'s':''}`;
-  if(items.length===0){list.innerHTML=`<div class="empty"><div class="empty-icon">🛒</div><p>${superFilter==='todos'?'Lista vacía. ¡Agrega lo que necesiten!':superFilter==='pendientes'?'¡Todo comprado! 🎉':'Nada comprado aún.'}</p></div>`;return;}
-  list.innerHTML=items.map(([id,i])=>`<div class="item-card ${i.done?'done':''}"><div class="item-check" onclick="toggleSuper('${id}')">${i.done?'✓':''}</div><span class="item-text">${escHtml(i.text)}</span>${i.qty?`<span class="item-qty">${escHtml(i.qty)}</span>`:''}<button class="del-btn" onclick="deleteSuper('${id}')">✕</button></div>`).join('');
+
+// ── TABS ───────────────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  event.target.classList.add('active');
 }
-window.setWho=function(w){selectedWho=w;document.getElementById('pill-yo').className='who-pill'+(w==='yo'?' active-yo':'');document.getElementById('pill-ella').className='who-pill'+(w==='ella'?' active-ella':'');document.getElementById('pill-ambos').className='who-pill'+(w==='ambos'?' active-ambos':'');};
-window.addTarea=async function(){const inp=document.getElementById('tareasInput'),text=inp.value.trim();if(!text){inp.focus();return;}setSyncStatus('syncing');await push(ref(db,'tareas'),{text,who:selectedWho,done:false,ts:Date.now()});inp.value='';inp.focus();};
-window.setTareasFilter=function(f,el){tareasFilter=f;document.querySelectorAll('#section-tareas .filter-chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTareas();};
-window.toggleTarea=async function(id){const item=tareasItems[id];if(!item)return;setSyncStatus('syncing');await set(ref(db,`tareas/${id}/done`),!item.done);};
-window.deleteTarea=async function(id){setSyncStatus('syncing');await remove(ref(db,`tareas/${id}`));};
-window.clearDoneTareas=async function(){setSyncStatus('syncing');await Promise.all(Object.entries(tareasItems).filter(([,v])=>v.done).map(([k])=>remove(ref(db,`tareas/${k}`))));};
-function renderTareas(){
-  const list=document.getElementById('tareasList'),all=Object.entries(tareasItems).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
-  let items=all;
-  if(tareasFilter==='pendientes')items=all.filter(([,v])=>!v.done);
-  if(tareasFilter==='yo')items=all.filter(([,v])=>v.who==='yo');
-  if(tareasFilter==='ella')items=all.filter(([,v])=>v.who==='ella');
-  const total=all.length,done=all.filter(([,v])=>v.done).length;
-  const pw=document.getElementById('tareasProgress');
-  if(total>0){pw.style.display='block';document.getElementById('tareasProgressText').textContent=`${done}/${total}`;document.getElementById('tareasProgressFill').style.width=`${Math.round(done/total*100)}%`;}else{pw.style.display='none';}
-  document.getElementById('tareasCount').textContent=total===0?'':`${total-done} pendiente${total-done!==1?'s':''}`;
-  const wl={yo:'🙋 Yo',ella:'👩 Ella',ambos:'🤝 Ambos'},wc={yo:'yo',ella:'ella',ambos:''};
-  if(items.length===0){list.innerHTML=`<div class="empty"><div class="empty-icon">✅</div><p>${tareasFilter==='todos'?'Sin tareas. ¡Agreguen la primera!':tareasFilter==='pendientes'?'¡Todo listo! 🎉':'Sin tareas aquí.'}</p></div>`;return;}
-  list.
+
+// ── SUPER ──────────────────────────────────────────────────────────────
+function addSuper() {
+  const inp = document.getElementById('superInput');
+  const qty = document.getElementById('superQty');
+  const text = inp.value.trim();
+  if (!text) { inp.focus(); return; }
+  state.super.unshift({ id: Date.now(), text, qty: qty.value.trim(), done: false });
+  inp.value = ''; qty.value = '';
+  inp.focus(); save(); renderSuper();
+}
+
+function setSuperFilter(f, el) {
+  superFilter = f;
+  document.querySelectorAll('#section-super .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderSuper();
+}
+
+function toggleSuper(id) {
+  const item = state.super.find(i => i.id === id);
+  if (item) { item.done = !item.done; save(); renderSuper(); }
+}
+
+function deleteSuper(id) {
+  state.super = state.super.filter(i => i.id !== id);
+  save(); renderSuper();
+}
+
+function clearDoneSuper() {
+  state.super = state.super.filter(i => !i.done);
+  save(); renderSuper();
+}
+
+function renderSuper() {
+  const list = document.getElementById('superList');
+  let items = state.super;
+  if (superFilter === 'pendientes') items = items.filter(i => !i.done);
+  if (superFilter === 'listos') items = items.filter(i => i.done);
+
+  const total = state.super.length;
+  const done = state.super.filter(i => i.done).length;
+
+  const progWrap = document.getElementById('superProgress');
+  if (total > 0) {
+    progWrap.style.display = 'block';
+    document.getElementById('superProgressText').textContent = `${done}/${total}`;
+    document.getElementById('superProgressFill').style.width = `${Math.round(done/total*100)}%`;
+  } else { progWrap.style.display = 'none'; }
+
+  document.getElementById('superCount').textContent =
+    total === 0 ? '' : `${total - done} pendiente${total - done !== 1 ? 's' : ''}`;
+
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🛒</div><p>${
+      superFilter === 'todos' ? 'Lista vacía. ¡Agrega lo que necesiten!' :
+      superFilter === 'pendientes' ? '¡Todo comprado!' : 'Nada comprado aún.'
+    }</p></div>`;
+    return;
+  }
+
+  list.innerHTML = items.map(i => `
+    <div class="item-card ${i.done ? 'done' : ''}">
+      <div class="item-check" onclick="toggleSuper(${i.id})">${i.done ? '✓' : ''}</div>
+      <span class="item-text">${escHtml(i.text)}</span>
+      ${i.qty ? `<span class="item-qty">${escHtml(i.qty)}</span>` : ''}
+      <button class="del-btn" onclick="deleteSuper(${i.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+// ── TAREAS ─────────────────────────────────────────────────────────────
+function setWho(w) {
+  selectedWho = w;
+  document.getElementById('pill-yo').className = 'who-pill' + (w === 'yo' ? ' active-yo' : '');
+  document.getElementById('pill-ella').className = 'who-pill' + (w === 'ella' ? ' active-ella' : '');
+  document.getElementById('pill-ambos').className = 'who-pill' + (w === 'ambos' ? ' active-ambos' : '');
+}
+
+function addTarea() {
+  const inp = document.getElementById('tareasInput');
+  const text = inp.value.trim();
+  if (!text) { inp.focus(); return; }
+  state.tareas.unshift({ id: Date.now(), text, who: selectedWho, done: false });
+  inp.value = ''; inp.focus(); save(); renderTareas();
+}
+
+function setTareasFilter(f, el) {
+  tareasFilter = f;
+  document.querySelectorAll('#section-tareas .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderTareas();
+}
+
+function toggleTarea(id) {
+  const item = state.tareas.find(i => i.id === id);
+  if (item) { item.done = !item.done; save(); renderTareas(); }
+}
+
+function deleteTarea(id) {
+  state.tareas = state.tareas.filter(i => i.id !== id);
+  save(); renderTareas();
+}
+
+function clearDoneTareas() {
+  state.tareas = state.tareas.filter(i => !i.done);
+  save(); renderTareas();
+}
+
+function renderTareas() {
+  const list = document.getElementById('tareasList');
+  let items = state.tareas;
+  if (tareasFilter === 'pendientes') items = items.filter(i => !i.done);
+  if (tareasFilter === 'yo') items = items.filter(i => i.who === 'yo');
+  if (tareasFilter === 'ella') items = items.filter(i => i.who === 'ella');
+
+  const total = state.tareas.length;
+  const done = state.tareas.filter(i => i.done).length;
+  const progWrap = document.getElementById('tareasProgress');
+  if (total > 0) {
+    progWrap.style.display = 'block';
+    document.getElementById('tareasProgressText').textContent = `${done}/${total}`;
+    document.getElementById('tareasProgressFill').style.width = `${Math.round(done/total*100)}%`;
+  } else { progWrap.style.display = 'none'; }
+
+  document.getElementById('tareasCount').textContent =
+    total === 0 ? '' : `${total - done} pendiente${total - done !== 1 ? 's' : ''}`;
+
+  const whoLabel = { yo: '🙋 Yo', ella: '👩 Ella', ambos: '🤝 Ambos' };
+  const whoClass = { yo: 'yo', ella: 'ella', ambos: '' };
+
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><p>${
+      tareasFilter === 'todos' ? 'Sin tareas. ¡Agreguen la primera!' :
+      tareasFilter === 'pendientes' ? '¡Todo listo! 🎉' : 'Sin tareas aquí.'
+    }</p></div>`;
+    return;
+  }
+
+  list.innerHTML = items.map(i => `
+    <div class="item-card ${i.done ? 'done' : ''}">
+      <div class="item-check" onclick="toggleTarea(${i.id})">${i.done ? '✓' : ''}</div>
+      <span class="item-text">${escHtml(i.text)}</span>
+      <span class="item-who ${whoClass[i.who]}">${whoLabel[i.who]}</span>
+      <button class="del-btn" onclick="deleteTarea(${i.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+// ── NOTAS ──────────────────────────────────────────────────────────────
+function setFrom(f) {
+  selectedFrom = f;
+  document.getElementById('from-yo').className = 'from-btn' + (f === 'yo' ? ' active' : '');
+  document.getElementById('from-ella').className = 'from-btn' + (f === 'ella' ? ' active' : '');
+}
+
+function saveNote() {
+  const inp = document.getElementById('noteInput');
+  const text = inp.value.trim();
+  if (!text) { inp.focus(); return; }
+  const now = new Date();
+  state.notas.unshift({
+    id: Date.now(),
+    from: selectedFrom,
+    text,
+    time: now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) +
+          ' · ' + now.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })
+  });
+  inp.value = ''; save(); renderNotas();
+}
+
+function deleteNota(id) {
+  state.notas = state.notas.filter(i => i.id !== id);
+  save(); renderNotas();
+}
+
+function renderNotas() {
+  const container = document.getElementById('savedNotes');
+  if (state.notas.length === 0) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">💬</div><p>Dejen mensajes y recordatorios aquí</p></div>`;
+    return;
+  }
+  container.innerHTML = state.notas.map(n => `
+    <div class="note-card">
+      <div class="note-meta">
+        <span class="note-from">${n.from === 'yo' ? '🙋 Yo' : '👩 Ella'}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="note-time">${n.time}</span>
+          <button class="del-btn" onclick="deleteNota(${n.id})">✕</button>
+        </div>
+      </div>
+      <div class="note-body">${escHtml(n.text)}</div>
+    </div>
+  `).join('');
+}
+
+// ── UTILS ──────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────
+load();
+initDate();
+renderSuper();
+renderTareas();
+renderNotas();
+</script>
+
+</body>
+</html>
